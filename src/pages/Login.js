@@ -1,8 +1,13 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
+import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
 
-function Auth() {
+function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
+
+  const auth = getAuth();
   const handleChange = (e) => {
     const { name, value } = e.target;
     if (name === 'email') {
@@ -11,9 +16,16 @@ function Auth() {
       setPassword(value);
     }
   };
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(e);
+    try {
+      const signIn = await signInWithEmailAndPassword(auth, email, password);
+      const user = signIn.user;
+      console.log(user);
+    } catch (error) {
+      console.log(error.message);
+      setErrorMessage(error.message);
+    }
   };
 
   return (
@@ -29,7 +41,7 @@ function Auth() {
         />
         <input
           name="password"
-          type="text"
+          type="password"
           placeholder="Password"
           required
           value={password}
@@ -37,6 +49,10 @@ function Auth() {
         />
         <input type="submit" value="Login" />
       </form>
+      <p>{errorMessage}</p>
+      <p>
+        <Link to={'/join'}>Create an account </Link>
+      </p>
       <div>
         <button>Continue with Google</button>
         <button>Continue with Github</button>
@@ -45,4 +61,4 @@ function Auth() {
   );
 }
 
-export default Auth;
+export default Login;

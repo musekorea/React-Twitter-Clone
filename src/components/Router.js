@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Home from '../pages/Home';
-import Auth from '../pages/Auth';
+import Login from '../pages/Login';
+import Join from '../pages/Join';
 import Profile from '../pages/Profile';
 import EditProfile from '../pages/EditProfile';
 
@@ -9,7 +10,8 @@ function AppRouter({ isLogin }) {
     <div>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={isLogin ? <Home /> : <Auth />} />
+          <Route path="/" element={isLogin ? <Home /> : <Login />} />
+          <Route path="/join" element={<Join />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="editProfile" element={<EditProfile />} />
         </Routes>
