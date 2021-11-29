@@ -1,13 +1,10 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import Home from '../routes/Home';
-import Auth from '../routes/Auth';
-import Profile from '../routes/Profile';
-import EditProfile from '../routes/EditProfile';
-import { useState } from 'react';
+import Home from '../pages/Home';
+import Auth from '../pages/Auth';
+import Profile from '../pages/Profile';
+import EditProfile from '../pages/EditProfile';
 
-function AppRouter() {
-  const [isLogin, setIsLogin] = useState(false);
-
+function AppRouter({ isLogin }) {
   return (
     <div>
       <BrowserRouter>
