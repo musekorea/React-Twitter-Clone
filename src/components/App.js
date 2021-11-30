@@ -1,28 +1,27 @@
 import AppRouter from './Router';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 
 function App() {
   const auth = getAuth();
-  const [isLogin, setIsLogin] = useState(auth.currentUser);
+  const [init, setInit] = useState(false);
+  const [isLogin, setIsLogin] = useState(false);
 
-  const loginState = onAuthStateChanged(auth, (user) => {
-    if (user) {
-      console.log('login상태');
-      console.log(user);
-      setIsLogin(true);
-    } else {
-      console.log('nologin상태');
-      console.log(user);
-      setIsLogin(false);
-    }
-  });
+  useEffect(() => {
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        console.log('login상태');
+        setInit(true);
+        setIsLogin(true);
+      } else {
+        console.log('nologin상태');
+        setInit(true);
+        setIsLogin(false);
+      }
+    });
+  }, []);
 
-  return (
-    <div>
-      <AppRouter isLogin={isLogin} />
-    </div>
-  );
+  return <div>{init ? <AppRouter isLogin={isLogin} /> : 'Initaling...'}</div>;
 }
 
 export default App;

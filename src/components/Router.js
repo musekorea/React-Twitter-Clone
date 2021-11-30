@@ -11,7 +11,7 @@ function AppRouter({ isLogin }) {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={isLogin ? <Home /> : <Login />} />
-          <Route path="/join" element={<Join />} />
+          <Route path="/join" element={isLogin ? <Home /> : <Join />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="editProfile" element={<EditProfile />} />
         </Routes>

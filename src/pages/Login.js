@@ -1,6 +1,13 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
+import {
+  getAuth,
+  signInWithEmailAndPassword,
+  GoogleAuthProvider,
+  signInWithPopup,
+  signInWithRedirect,
+  GithubAuthProvider,
+} from 'firebase/auth';
 
 function Login() {
   const [email, setEmail] = useState('');
@@ -27,7 +34,40 @@ function Login() {
       setErrorMessage(error.message);
     }
   };
+  const handleSocialLogin = async (e) => {
+    const { name } = e.target;
 
+    if (name === `google`) {
+      try {
+        const provider = new GoogleAuthProvider();
+        const googleLogin = await signInWithPopup(auth, provider);
+        const credential = GoogleAuthProvider.credentialFromResult(googleLogin);
+        const token = credential.accessToken;
+        const user = googleLogin.user;
+        console.log(user);
+      } catch (error) {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        const email = error.email;
+        const credential = GoogleAuthProvider.credentialFromError(error);
+        console.log(error);
+      }
+    } else if (name === `github`) {
+      try {
+        const provider = new GithubAuthProvider();
+        const githubLogin = await signInWithRedirect(auth, provider);
+        const credential = GithubAuthProvider.credentialFromResult(githubLogin);
+        const token = credential.accessToken;
+        const user = githubLogin.user;
+        console.log(user);
+      } catch (error) {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        const email = error.email;
+        const credential = GithubAuthProvider.credentialFromError(error);
+      }
+    }
+  };
   return (
     <div>
       <form onSubmit={handleSubmit}>
@@ -54,8 +94,12 @@ function Login() {
         <Link to={'/join'}>Create an account </Link>
       </p>
       <div>
-        <button>Continue with Google</button>
-        <button>Continue with Github</button>
+        <button onClick={handleSocialLogin} name="google">
+          Continue with Google
+        </button>
+        <button onClick={handleSocialLogin} name="github">
+          Continue with Github
+        </button>
       </div>
     </div>
   );
