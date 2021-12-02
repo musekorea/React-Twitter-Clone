@@ -21,7 +21,7 @@ function App() {
     });
   }, []);
 
-  return <div>{init ? <AppRouter isLogin={isLogin} /> : 'Initaling...'}</div>;
+  return <div>{init ? <AppRouter isLogin={isLogin} /> : 'Initalizing...'}</div>;
 }
 
 export default App;
