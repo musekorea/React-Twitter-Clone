@@ -1,9 +1,32 @@
-import { useState } from 'react';
-import { collection, addDoc } from 'firebase/firestore';
+import { useEffect, useState } from 'react';
+import {
+  collection,
+  addDoc,
+  getDocs,
+  doc,
+  onSnapshot,
+  orderBy,
+  query,
+} from 'firebase/firestore';
 import { db } from '../firebase.js';
 
-function Home() {
+function Home({ loginUser }) {
   const [tweet, setTweet] = useState('');
+  const [tweets, setTweets] = useState([]);
+
+  useEffect(() => {
+    const dbQuery = query(
+      collection(db, 'tweets'),
+      orderBy('createdAt', 'desc')
+    );
+    const listenDB = onSnapshot(dbQuery, (results) => {
+      const tweetArray = results.docs.map((result) => {
+        return { id: result.id, ...result.data() };
+      });
+      setTweets((prev) => tweetArray);
+    });
+  }, []);
+
   const handleTweet = (e) => {
     setTweet(e.target.value);
   };
@@ -12,9 +35,11 @@ function Home() {
 
     try {
       const addTweet = await addDoc(collection(db, 'tweets'), {
-        tweet,
+        owner: loginUser.uid,
+        text: tweet,
         createdAt: Date.now(),
       });
+      setTweet('');
     } catch (error) {
       console.log(e);
     }
@@ -29,9 +54,15 @@ function Home() {
           maxLength="280"
           onChange={handleTweet}
           value={tweet}
+          required
         />
         <input type="submit" value="Tweet" />
       </form>
+      <section>
+        {tweets.map((content) => {
+          return <div key={content.id}>{content.text}</div>;
+        })}
+      </section>
     </div>
   );
 }

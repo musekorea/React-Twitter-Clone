@@ -6,22 +6,33 @@ function App() {
   const auth = getAuth();
   const [init, setInit] = useState(false);
   const [isLogin, setIsLogin] = useState(false);
+  const [loginUser, setLoginUser] = useState(null);
 
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
       if (user) {
-        console.log('login상태');
+        console.log('login success');
         setInit(true);
         setIsLogin(true);
+        setLoginUser(user);
       } else {
-        console.log('nologin상태');
+        console.log('login failed');
         setInit(true);
         setIsLogin(false);
+        setLoginUser(null);
       }
     });
   }, []);
 
-  return <div>{init ? <AppRouter isLogin={isLogin} /> : 'Initalizing...'}</div>;
+  return (
+    <div>
+      {init ? (
+        <AppRouter isLogin={isLogin} loginUser={loginUser} />
+      ) : (
+        'Initalizing...'
+      )}
+    </div>
+  );
 }
 
 export default App;
