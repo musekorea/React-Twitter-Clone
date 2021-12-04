@@ -2,15 +2,15 @@ import { useEffect, useState } from 'react';
 import {
   collection,
   addDoc,
-  getDocs,
-  doc,
   onSnapshot,
   orderBy,
   query,
 } from 'firebase/firestore';
 import { db } from '../firebase.js';
+import Tweet from '../components/Tweet.js';
 
 function Home({ loginUser }) {
+  console.log(loginUser);
   const [tweet, setTweet] = useState('');
   const [tweets, setTweets] = useState([]);
 
@@ -60,7 +60,13 @@ function Home({ loginUser }) {
       </form>
       <section>
         {tweets.map((content) => {
-          return <div key={content.id}>{content.text}</div>;
+          return (
+            <Tweet
+              content={content}
+              key={content.id}
+              owner={loginUser.uid === content.owner}
+            />
+          );
         })}
       </section>
     </div>
