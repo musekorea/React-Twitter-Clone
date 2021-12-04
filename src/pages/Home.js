@@ -9,8 +9,7 @@ import {
 import { db } from '../firebase.js';
 import Tweet from '../components/Tweet.js';
 
-function Home({ loginUser }) {
-  console.log(loginUser);
+function Home({ loginUser, isEditing }) {
   const [tweet, setTweet] = useState('');
   const [tweets, setTweets] = useState([]);
 
