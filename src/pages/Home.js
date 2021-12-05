@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   collection,
   addDoc,
@@ -12,6 +12,8 @@ import Tweet from '../components/Tweet.js';
 function Home({ loginUser, isEditing }) {
   const [tweet, setTweet] = useState('');
   const [tweets, setTweets] = useState([]);
+  const [attachedFile, setAttachedFile] = useState(null);
+  const fileInput = useRef();
 
   useEffect(() => {
     const dbQuery = query(
@@ -44,6 +46,22 @@ function Home({ loginUser, isEditing }) {
     }
   };
 
+  const handleFile = (e) => {
+    const file = e.target.files[0];
+    console.log(file);
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = (e) => {
+      console.log(reader);
+      setAttachedFile(reader.result);
+    };
+  };
+
+  const clearPreview = (e) => {
+    setAttachedFile(null);
+    fileInput.current.value = '';
+  };
+
   return (
     <div>
       <form action="" onSubmit={handleSubmit}>
@@ -55,8 +73,27 @@ function Home({ loginUser, isEditing }) {
           value={tweet}
           required
         />
+        <p></p>
+
+        <input
+          type="file"
+          accept="image/*"
+          onChange={handleFile}
+          ref={fileInput}
+        />
+        <p></p>
+
         <input type="submit" value="Tweet" />
       </form>
+      <hr />
+
+      {attachedFile ? (
+        <div>
+          <img src={attachedFile} alt="preview" style={{ width: '50px' }} />
+          <button onClick={clearPreview}>Clear</button>
+        </div>
+      ) : null}
+
       <section>
         {tweets.map((content) => {
           return (
