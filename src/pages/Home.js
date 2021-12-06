@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { db, storage } from '../firebase.js';
 import {
   collection,
   addDoc,
@@ -6,8 +7,9 @@ import {
   orderBy,
   query,
 } from 'firebase/firestore';
-import { db } from '../firebase.js';
+import { ref, uploadString } from 'firebase/storage';
 import Tweet from '../components/Tweet.js';
+import { v4 as uuidv4 } from 'uuid';
 
 function Home({ loginUser, isEditing }) {
   const [tweet, setTweet] = useState('');
@@ -33,6 +35,9 @@ function Home({ loginUser, isEditing }) {
   };
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const imageRef = ref(storage, `${loginUser.uid}/${uuidv4()}`);
+    const uploadImage = await uploadString(imageRef, attachedFile, 'data_url');
+    console.log(uploadImage);
 
     try {
       const addTweet = await addDoc(collection(db, 'tweets'), {
@@ -48,11 +53,9 @@ function Home({ loginUser, isEditing }) {
 
   const handleFile = (e) => {
     const file = e.target.files[0];
-    console.log(file);
     const reader = new FileReader();
     reader.readAsDataURL(file);
     reader.onload = (e) => {
-      console.log(reader);
       setAttachedFile(reader.result);
     };
   };
