@@ -7,7 +7,7 @@ import {
   orderBy,
   query,
 } from 'firebase/firestore';
-import { ref, uploadString } from 'firebase/storage';
+import { ref, uploadString, getDownloadURL } from 'firebase/storage';
 import Tweet from '../components/Tweet.js';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -33,19 +33,31 @@ function Home({ loginUser, isEditing }) {
   const handleTweet = (e) => {
     setTweet(e.target.value);
   };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const imageRef = ref(storage, `${loginUser.uid}/${uuidv4()}`);
-    const uploadImage = await uploadString(imageRef, attachedFile, 'data_url');
-    console.log(uploadImage);
-
+    let imageURL;
     try {
+      if (attachedFile) {
+        const imageRef = ref(storage, `${loginUser.uid}/${uuidv4()}`);
+        const uploadImage = await uploadString(
+          imageRef,
+          attachedFile,
+          'data_url'
+        );
+        imageURL = await getDownloadURL(imageRef);
+      } else {
+        imageURL = null;
+      }
       const addTweet = await addDoc(collection(db, 'tweets'), {
         owner: loginUser.uid,
         text: tweet,
         createdAt: Date.now(),
+        imageURL,
       });
       setTweet('');
+      fileInput.current.value = '';
+      setAttachedFile(null);
     } catch (error) {
       console.log(e);
     }
@@ -77,7 +89,12 @@ function Home({ loginUser, isEditing }) {
           required
         />
         <p></p>
-
+        {attachedFile ? (
+          <div>
+            <img src={attachedFile} alt="preview" style={{ width: '50px' }} />
+            <button onClick={clearPreview}>Clear</button>
+          </div>
+        ) : null}
         <input
           type="file"
           accept="image/*"
@@ -85,17 +102,9 @@ function Home({ loginUser, isEditing }) {
           ref={fileInput}
         />
         <p></p>
-
         <input type="submit" value="Tweet" />
       </form>
       <hr />
-
-      {attachedFile ? (
-        <div>
-          <img src={attachedFile} alt="preview" style={{ width: '50px' }} />
-          <button onClick={clearPreview}>Clear</button>
-        </div>
-      ) : null}
 
       <section>
         {tweets.map((content) => {
@@ -104,6 +113,7 @@ function Home({ loginUser, isEditing }) {
               content={content}
               key={content.id}
               owner={loginUser.uid === content.owner}
+              imageURL={content.imageURL}
             />
           );
         })}

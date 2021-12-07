@@ -1,6 +1,7 @@
-import { db } from '../firebase.js';
+import { db, storage } from '../firebase.js';
 import { doc, deleteDoc, updateDoc } from 'firebase/firestore';
 import { useState } from 'react';
+import { ref, deleteObject } from '@firebase/storage';
 
 const Tweet = ({ content, owner, editing }) => {
   const [isEditing, setIsEditing] = useState(false);
@@ -9,7 +10,15 @@ const Tweet = ({ content, owner, editing }) => {
   const handleDelete = async (e) => {
     const ok = window.confirm('Are you sure want to delete this tweet?');
     if (ok) {
-      await deleteDoc(doc(db, 'tweets', `${content.id}`));
+      try {
+        await deleteDoc(doc(db, 'tweets', `${content.id}`));
+        if (content.imageURL) {
+          const imageRef = ref(storage, content.imageURL);
+          await deleteObject(imageRef);
+        }
+      } catch (error) {
+        console.log(error);
+      }
     } else {
       return;
     }
@@ -53,6 +62,12 @@ const Tweet = ({ content, owner, editing }) => {
       ) : (
         <>
           <div>{content.text}</div>
+          {content.imageURL ? (
+            <div>
+              <img src={content.imageURL} style={{ width: '100px' }} />
+            </div>
+          ) : null}
+
           {owner ? (
             <>
               <button onClick={toggleEdit}>Edit</button>
