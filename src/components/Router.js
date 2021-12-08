@@ -3,14 +3,13 @@ import Home from '../pages/Home';
 import Login from '../pages/Login';
 import Join from '../pages/Join';
 import Profile from '../pages/Profile';
-import EditProfile from '../pages/EditProfile';
 import Navbar from './Navbar.js';
 
 function AppRouter({ isLogin, loginUser }) {
   return (
     <div>
       <BrowserRouter>
-        {isLogin ? <Navbar /> : null}
+        {isLogin && loginUser ? <Navbar loginUser={loginUser} /> : null}
         <Routes>
           <Route
             path="/"
@@ -20,8 +19,10 @@ function AppRouter({ isLogin, loginUser }) {
             path="/join"
             element={isLogin ? <Home loginUser={loginUser} /> : <Join />}
           />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="editProfile" element={<EditProfile />} />
+          <Route
+            path="/profile"
+            element={isLogin ? <Profile loginUser={loginUser} /> : <Login />}
+          />
         </Routes>
       </BrowserRouter>
     </div>

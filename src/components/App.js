@@ -12,14 +12,14 @@ function App() {
     onAuthStateChanged(auth, (user) => {
       if (user) {
         console.log('login success');
-        setInit(true);
-        setIsLogin(true);
         setLoginUser(user);
+        setIsLogin(true);
+        setInit(true);
       } else {
         console.log('login failed');
         setInit(true);
-        setIsLogin(false);
         setLoginUser(null);
+        setIsLogin(false);
       }
     });
   }, []);

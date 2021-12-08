@@ -1,6 +1,12 @@
 import { Link } from 'react-router-dom';
 
-function Navbar() {
+function Navbar({ loginUser }) {
+  console.log(`네브바`, loginUser.displayName);
+  if (loginUser.displayName === null) {
+    const name = loginUser.email.split('@')[0];
+    loginUser.displayName = name;
+  }
+
   return (
     <nav>
       <ul>
@@ -8,7 +14,7 @@ function Navbar() {
           <Link to="/">Home</Link>
         </li>
         <li>
-          <Link to="/profile">My Profile</Link>
+          <Link to="/profile">{loginUser.displayName}'s Profile</Link>
         </li>
       </ul>
     </nav>

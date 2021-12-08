@@ -31,6 +31,7 @@ function Join() {
         email,
         password
       );
+      console.log(createUser);
       const user = createUser.user;
       console.log(user);
     } catch (error) {
@@ -50,6 +51,7 @@ function Join() {
           value={email}
           onChange={handleChange}
         />
+
         <input
           name="password"
           type="password"
@@ -66,7 +68,6 @@ function Join() {
           value={password2}
           onChange={handleChange}
         />
-
         <input type="submit" value="Join" />
       </form>
       <p>{errorMessage}</p>
